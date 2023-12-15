@@ -1,0 +1,19 @@
+.user-profile {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-profile img {
+    width: 100px; /* Establece el ancho de la imagen */
+    height: 100px; /* Establece la altura de la imagen */
+    border-radius: 50%; /* Hace que la imagen tenga bordes redondeados */
+    margin-right: 20px; /* Espacio entre la imagen y los detalles del usuario */
+  }
+  
+  .user-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Puedes ajustar estos estilos según tu diseño y preferencias */
+  
