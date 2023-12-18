@@ -5,7 +5,7 @@ import { useGoogleLogin, googleLogout } from "@react-oauth/google";
 
 function App() {
   const [futbolistas, setFutbolistas] = useState([]);
-  const [voted, setVoted] = useState(false);
+  const [votedUsers, setVotedUsers] = useState([]);
 
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -15,13 +15,19 @@ function App() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  },[]);
 
-  useEffect(() =>{
+    const votedUsersFromStorage = localStorage.getItem("VotedUsers");
+    if (votedUsersFromStorage) {
+      setVotedUsers(JSON.parse(votedUsersFromStorage));
+    }
+  }, []);
+
+  useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
     }
-  });
+    localStorage.setItem("votedUsers", JSON.stringify(votedUsers));
+  }, [user, votedUsers]);
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
@@ -70,7 +76,7 @@ function App() {
 
   const handleVote = async (id) => {
     try {
-      if (!voted) {
+      if (user && !votedUsers.includes(user.id)) {
         const response = await axios.get(
           `http://localhost:8080/api/futbolistas/${id}`
         );
@@ -83,7 +89,8 @@ function App() {
         );
 
         setFutbolistas(updatedFutbolistas);
-        setVoted(true);
+
+        setVotedUsers([...votedUsers, user.id]);
 
         await axios.put(`http://localhost:8080/api/futbolistas/${id}/votes`, {
           votes: currentVotes + 1,
@@ -101,8 +108,13 @@ function App() {
           <img src={profile.picture} alt="User profile" />
           <div className="user-details">
             <h3>Sesión Iniciada</h3>
-            <p><strong>Nombre:</strong> {profile.name}</p>
-            <p><strong>Correo:</strong>{profile.email}</p>
+            <p>
+              <strong>Nombre:</strong> {profile.name}
+            </p>
+            <p>
+              <strong>Correo:</strong>
+              {profile.email}
+            </p>
             <button onClick={logOut}>Log out</button>
           </div>
         </div>
@@ -116,9 +128,13 @@ function App() {
           <li key={futbolista.id}>
             {futbolista.id} - {futbolista.name} - Votos: {futbolista.votes}
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <button onClick={() => handleVote(futbolista.id)} disabled={voted}>
-              Votar
-            </button>
+            {votedUsers.includes(user?.id) ? (
+              <button onClick={() => handleVote(futbolista.id)} disabled>
+                Jugador votado
+              </button>
+            ) : (
+              <button onClick={() => handleVote(futbolista.id)}>Votar</button>
+            )}
           </li>
         ))}
       </ul>
