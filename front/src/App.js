@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import { useGoogleLogin, googleLogout } from "@react-oauth/google";
+import { Navbar, Nav, Button } from "react-bootstrap";
 
 function App() {
   const [futbolistas, setFutbolistas] = useState([]);
@@ -111,27 +112,32 @@ function App() {
 
   return (
     <>
-      <div className="user-profile">
-        {profile ? (
-          <>
-            <img src={profile.picture} alt="User profile" />
-            <div className="user-details">
-              <h3>Sesión Iniciada</h3>
-              <p>
-                <strong>Nombre: </strong>
-                {profile.name}
-              </p>
-              <p>
-                <strong>Correo: </strong>
-                {profile.email}
-              </p>
-              <button onClick={logOut}>Log out</button>
-            </div>
-          </>
-        ) : (
-          <button onClick={() => login()}>Sign in with Google</button>
-        )}
-      </div>
+      <Navbar bg="light" expand="lg">
+        <Navbar.Brand href="/">MARCA </Navbar.Brand>
+        <Nav>
+          <div className="user-profile">
+            {profile ? (
+              <>
+                <img src={profile.picture} alt="User profile" />
+                <div className="user-details">
+                  <h3>Sesión Iniciada</h3>
+                  <p>
+                    <strong>Nombre: </strong>
+                    {profile.name}
+                  </p>
+                  <p>
+                    <strong>Correo: </strong>
+                    {profile.email}
+                  </p>
+                  <Button onClick={logOut}>Log out</Button>
+                </div>
+              </>
+            ) : (
+              <Button onClick={() => login()}>Sign in with Google</Button>
+            )}
+          </div>
+        </Nav>
+      </Navbar>
 
       <h2>Futbolistas</h2>
       <ul>
