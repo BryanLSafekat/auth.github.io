@@ -1,5 +1,4 @@
 const express = require("express");
-const { OAuth2Client } = require("google-auth-library");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs");
@@ -39,7 +38,6 @@ app.get("/api/futbolistas/:id", (req, res) => {
 
 app.put("/api/futbolistas/:id/votes", (req, res) => {
   const { id } = req.params;
-  const { votes } = req.body;
 
   fs.readFile(path.join(__dirname, "../api.json"), "utf8", (err, data) => {
     if (err) {

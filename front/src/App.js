@@ -9,14 +9,16 @@ function App() {
 
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      setIsLoggedIn(true);
     }
 
-    const votedUsersFromStorage = localStorage.getItem("VotedUsers");
+    const votedUsersFromStorage = localStorage.getItem("votedUsers");
     if (votedUsersFromStorage) {
       setVotedUsers(JSON.parse(votedUsersFromStorage));
     }
@@ -25,6 +27,9 @@ function App() {
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
     localStorage.setItem("votedUsers", JSON.stringify(votedUsers));
   }, [user, votedUsers]);
@@ -58,6 +63,7 @@ function App() {
     setProfile(null);
     localStorage.removeItem("user");
     setUser(null);
+    setIsLoggedIn(false);
   };
 
   useEffect(() => {
@@ -76,7 +82,7 @@ function App() {
 
   const handleVote = async (id) => {
     try {
-      if (user && !votedUsers.includes(user.id)) {
+      if (isLoggedIn && !votedUsers.includes(user?.id)) {
         const response = await axios.get(
           `http://localhost:8080/api/futbolistas/${id}`
         );
@@ -95,6 +101,8 @@ function App() {
         await axios.put(`http://localhost:8080/api/futbolistas/${id}/votes`, {
           votes: currentVotes + 1,
         });
+      } else {
+        console.log("Debes iniciar sesión para votar o ya has votado.");
       }
     } catch (error) {
       console.log("Error al votar: ", error);
@@ -103,24 +111,27 @@ function App() {
 
   return (
     <>
-      {profile ? (
-        <div className="user-profile">
-          <img src={profile.picture} alt="User profile" />
-          <div className="user-details">
-            <h3>Sesión Iniciada</h3>
-            <p>
-              <strong>Nombre:</strong> {profile.name}
-            </p>
-            <p>
-              <strong>Correo:</strong>
-              {profile.email}
-            </p>
-            <button onClick={logOut}>Log out</button>
-          </div>
-        </div>
-      ) : (
-        <button onClick={() => login()}>Sign in with Google</button>
-      )}
+      <div className="user-profile">
+        {profile ? (
+          <>
+            <img src={profile.picture} alt="User profile" />
+            <div className="user-details">
+              <h3>Sesión Iniciada</h3>
+              <p>
+                <strong>Nombre: </strong>
+                {profile.name}
+              </p>
+              <p>
+                <strong>Correo: </strong>
+                {profile.email}
+              </p>
+              <button onClick={logOut}>Log out</button>
+            </div>
+          </>
+        ) : (
+          <button onClick={() => login()}>Sign in with Google</button>
+        )}
+      </div>
 
       <h2>Futbolistas</h2>
       <ul>
@@ -128,13 +139,12 @@ function App() {
           <li key={futbolista.id}>
             {futbolista.id} - {futbolista.name} - Votos: {futbolista.votes}
             &nbsp;&nbsp;&nbsp;&nbsp;
-            {votedUsers.includes(user?.id) ? (
-              <button onClick={() => handleVote(futbolista.id)} disabled>
-                Jugador votado
-              </button>
-            ) : (
-              <button onClick={() => handleVote(futbolista.id)}>Votar</button>
-            )}
+            <button
+              onClick={() => handleVote(futbolista.id)}
+              disabled={!isLoggedIn || votedUsers.includes(user?.id)}
+            >
+              Votar
+            </button>
           </li>
         ))}
       </ul>
