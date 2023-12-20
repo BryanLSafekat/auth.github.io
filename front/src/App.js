@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import { useGoogleLogin, googleLogout } from "@react-oauth/google";
-import { Navbar, Nav, Button } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  Container,
+  Row,
+  Col,
+  Button,
+} from "react-bootstrap";
 
 function App() {
   const [futbolistas, setFutbolistas] = useState([]);
@@ -11,6 +19,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [expanded, setExpanded] = useState(false);
+  const handleToggle = () => setExpanded(!expanded);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -112,48 +123,58 @@ function App() {
 
   return (
     <>
-      <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="/">MARCA </Navbar.Brand>
-        <Nav>
-          <div className="user-profile">
+      <Navbar bg="dark" expand="lg" expanded={expanded} data-bs-theme="dark">
+        <Navbar.Brand href="/">MARCA</Navbar.Brand>
+        <Navbar.Toggle
+          aria-controls="basic-navbar-nav"
+          onClick={handleToggle}
+        />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ml-auto">
             {profile ? (
-              <>
-                <img src={profile.picture} alt="User profile" />
-                <div className="user-details">
-                  <h3>Sesión Iniciada</h3>
-                  <p>
-                    <strong>Nombre: </strong>
-                    {profile.name}
-                  </p>
-                  <p>
-                    <strong>Correo: </strong>
-                    {profile.email}
-                  </p>
-                  <Button onClick={logOut}>Log out</Button>
-                </div>
-              </>
+              <NavDropdown title="Usuario" id="basic-nav-dropdown">
+                <NavDropdown.Item>{profile.name}</NavDropdown.Item>
+                <NavDropdown.Item onClick={logOut}>
+                  Cerrar sesión
+                </NavDropdown.Item>
+              </NavDropdown>
             ) : (
-              <Button onClick={() => login()}>Sign in with Google</Button>
+              <Nav.Link onClick={() => login()}>
+                Iniciar sesión con Google
+              </Nav.Link>
             )}
-          </div>
-        </Nav>
+          </Nav>
+          <Nav>
+            <Nav.Link href="/about">About Us</Nav.Link>
+            <Nav.Link href="/contact">Contacto</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
 
       <h2>Futbolistas</h2>
-      <ul>
-        {futbolistas.map((futbolista) => (
-          <li key={futbolista.id}>
-            {futbolista.id} - {futbolista.name} - Votos: {futbolista.votes}
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <button
-              onClick={() => handleVote(futbolista.id)}
-              disabled={!isLoggedIn || votedUsers.includes(user?.id)}
-            >
-              Votar
-            </button>
-          </li>
-        ))}
-      </ul>
+
+      <Container>
+        <Row>
+          {futbolistas.map((futbolista) => (
+            <Col key={futbolista.id} md={3} sm={6} xs={12}>
+              <div className="player-card">
+                <p>
+                  {futbolista.id}º {futbolista.name}
+                  <br />
+                  Votos: {futbolista.votes}
+                </p>
+                <Button
+                  onClick={() => handleVote(futbolista.id)}
+                  disabled={!isLoggedIn || votedUsers.includes(user?.id)}
+                >
+                  Votar
+                </Button>
+              </div>
+              <br/>
+            </Col>
+          ))}
+        </Row>
+      </Container>
     </>
   );
 }

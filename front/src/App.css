@@ -14,3 +14,13 @@
   display: flex;
   flex-direction: column;
 }
+
+h2{
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.player-card{
+  text-align: center;
+}
