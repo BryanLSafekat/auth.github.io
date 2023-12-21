@@ -15,12 +15,11 @@
   flex-direction: column;
 }
 
-h2{
-  text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
 .player-card{
   text-align: center;
+}
+
+.player-card:hover{
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
 }

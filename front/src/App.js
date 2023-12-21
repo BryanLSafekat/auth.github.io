@@ -43,8 +43,11 @@ function App() {
     } else {
       setIsLoggedIn(false);
     }
+  }, [user]);
+
+  useEffect(() => {
     localStorage.setItem("votedUsers", JSON.stringify(votedUsers));
-  }, [user, votedUsers]);
+  }, [votedUsers]);
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
@@ -108,14 +111,17 @@ function App() {
 
         setFutbolistas(updatedFutbolistas);
 
-        setVotedUsers([...votedUsers, user.id]);
+        setVotedUsers((prevVotedUsers) => [...prevVotedUsers, user.id]);
 
         await axios.put(`http://localhost:8080/api/futbolistas/${id}/votes`, {
           votes: currentVotes + 1,
         });
-      } else {
-        console.log("Debes iniciar sesión para votar o ya has votado.");
-      }
+
+        localStorage.setItem(
+          "votedUsers",
+          JSON.stringify([...votedUsers, user.id])
+        );
+      } 
     } catch (error) {
       console.log("Error al votar: ", error);
     }
@@ -123,54 +129,68 @@ function App() {
 
   return (
     <>
-      <Navbar bg="dark" expand="lg" expanded={expanded} data-bs-theme="dark">
-        <Navbar.Brand href="/">MARCA</Navbar.Brand>
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          onClick={handleToggle}
-        />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
-            {profile ? (
-              <NavDropdown title="Usuario" id="basic-nav-dropdown">
-                <NavDropdown.Item>{profile.name}</NavDropdown.Item>
-                <NavDropdown.Item onClick={logOut}>
-                  Cerrar sesión
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
-              <Nav.Link onClick={() => login()}>
-                Iniciar sesión con Google
-              </Nav.Link>
-            )}
-          </Nav>
-          <Nav>
-            <Nav.Link href="/about">About Us</Nav.Link>
-            <Nav.Link href="/contact">Contacto</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
+      <Navbar
+        bg="dark"
+        expand="lg"
+        variant="dark"
+        expanded={expanded}
+        sticky="top"
+      >
+        <Container>
+          <Navbar.Brand href="/">MARCA</Navbar.Brand>
+          <Navbar.Toggle
+            aria-controls="basic-navbar-nav"
+            onClick={handleToggle}
+          />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+              {profile ? (
+                <NavDropdown title="Cuenta" id="basic-nav-dropdown">
+                  <NavDropdown.Item>{profile.name}</NavDropdown.Item>
+                  <NavDropdown.Item onClick={logOut}>
+                    Cerrar sesión
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Nav.Link onClick={() => login()}>
+                  Iniciar sesión con Google
+                </Nav.Link>
+              )}
+            </Nav>
+            <Nav>
+              <Nav.Link href="">About Us</Nav.Link>
+              <Nav.Link href="#">Contacto</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
       </Navbar>
 
-      <h2>Futbolistas</h2>
+      <h2 className="text-center mt-4 mb-3">Futbolistas</h2>
 
       <Container>
         <Row>
           {futbolistas.map((futbolista) => (
             <Col key={futbolista.id} md={3} sm={6} xs={12}>
-              <div className="player-card">
-                <p>
-                  {futbolista.id}º {futbolista.name}
-                  <br />
-                  Votos: {futbolista.votes}
-                </p>
+              <div className="player-card bg-light p-3 mb-3 rounded">
+                <strong>
+                  <p>
+                    {futbolista.id}
+                    <br />
+                    {futbolista.name}
+                    <br />
+                    Votos: {futbolista.votes}
+                  </p>
+                </strong>
                 <Button
+                  className="w-100"
+                  variant="outline-primary"
                   onClick={() => handleVote(futbolista.id)}
                   disabled={!isLoggedIn || votedUsers.includes(user?.id)}
                 >
                   Votar
                 </Button>
               </div>
-              <br/>
+              <br />
             </Col>
           ))}
         </Row>
