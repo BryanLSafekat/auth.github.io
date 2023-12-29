@@ -121,7 +121,7 @@ function App() {
           "votedUsers",
           JSON.stringify([...votedUsers, user.id])
         );
-      } 
+      }
     } catch (error) {
       console.log("Error al votar: ", error);
     }
@@ -165,7 +165,7 @@ function App() {
         </Container>
       </Navbar>
 
-      <h2 className="text-center mt-4 mb-3">Futbolistas</h2>
+      <h2 className="text-center mt-4 mb-3">100 Futbolistas</h2>
 
       <Container>
         <Row>
