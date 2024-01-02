@@ -25,14 +25,20 @@ function App() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    const votedUsersFromStorage = localStorage.getItem("votedUsers");
+
     if (storedUser) {
       setUser(JSON.parse(storedUser));
       setIsLoggedIn(true);
     }
 
-    const votedUsersFromStorage = localStorage.getItem("votedUsers");
     if (votedUsersFromStorage) {
+
       setVotedUsers(JSON.parse(votedUsersFromStorage));
+    } else {
+
+      localStorage.setItem("votedUsers", JSON.stringify([]))
+      setVotedUsers([]);
     }
   }, []);
 
@@ -103,24 +109,17 @@ function App() {
         );
         const currentVotes = response.data.votes || 0;
 
-        const updatedFutbolistas = futbolistas.map((futbolista) =>
-          futbolista.id === id
-            ? { ...futbolista, votes: futbolista.votes + 1 }
-            : futbolista
-        );
-
-        setFutbolistas(updatedFutbolistas);
-
-        setVotedUsers((prevVotedUsers) => [...prevVotedUsers, user.id]);
-
         await axios.put(`http://localhost:8080/api/futbolistas/${id}/votes`, {
           votes: currentVotes + 1,
         });
 
-        localStorage.setItem(
-          "votedUsers",
-          JSON.stringify([...votedUsers, user.id])
-        );
+        const updatedVotedUsers = [...votedUsers, user.id];
+        localStorage.setItem("votedUsers", JSON.stringify(updatedVotedUsers));
+
+        setVotedUsers(updatedVotedUsers);
+
+        setUser({ ...user, id: null });
+        localStorage.setItem("user", JSON.stringify({ ...user, id: null }));
       }
     } catch (error) {
       console.log("Error al votar: ", error);
@@ -158,14 +157,14 @@ function App() {
               )}
             </Nav>
             <Nav>
-              <Nav.Link href="">About Us</Nav.Link>
+              <Nav.Link href="#">About Us</Nav.Link>
               <Nav.Link href="#">Contacto</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      <h2 className="text-center mt-4 mb-3">100 Futbolistas</h2>
+      <h2 className="text-center mt-4 mb-3">Los 100 Futbolistas</h2>
 
       <Container>
         <Row>
