@@ -35,10 +35,6 @@ function App() {
     if (votedUsersFromStorage) {
 
       setVotedUsers(JSON.parse(votedUsersFromStorage));
-    } else {
-
-      localStorage.setItem("votedUsers", JSON.stringify([]))
-      setVotedUsers([]);
     }
   }, []);
 
@@ -46,14 +42,8 @@ function App() {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
       setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
+    } 
   }, [user]);
-
-  useEffect(() => {
-    localStorage.setItem("votedUsers", JSON.stringify(votedUsers));
-  }, [votedUsers]);
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
@@ -117,9 +107,6 @@ function App() {
         localStorage.setItem("votedUsers", JSON.stringify(updatedVotedUsers));
 
         setVotedUsers(updatedVotedUsers);
-
-        setUser({ ...user, id: null });
-        localStorage.setItem("user", JSON.stringify({ ...user, id: null }));
       }
     } catch (error) {
       console.log("Error al votar: ", error);
