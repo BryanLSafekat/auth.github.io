@@ -33,7 +33,6 @@ function App() {
     }
 
     if (votedUsersFromStorage) {
-
       setVotedUsers(JSON.parse(votedUsersFromStorage));
     }
   }, []);
@@ -42,11 +41,13 @@ function App() {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
       setIsLoggedIn(true);
-    } 
+    }
   }, [user]);
 
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
+    onSuccess: (codeResponse) => {
+      setUser(codeResponse);
+    },
     onError: (error) => console.log("Error al iniciar sesión", error),
   });
 
@@ -93,6 +94,7 @@ function App() {
 
   const handleVote = async (id) => {
     try {
+      
       if (isLoggedIn && !votedUsers.includes(user?.id)) {
         const response = await axios.get(
           `http://localhost:8080/api/futbolistas/${id}`
