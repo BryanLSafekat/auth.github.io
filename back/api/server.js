@@ -7,7 +7,11 @@ const app = express();
 const PORT = 8080;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://auth-pi-lovat.vercel.app',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Autorization',]
+}));
 
 //Las siguientes lineas son para leer la API y actulizarla
 
