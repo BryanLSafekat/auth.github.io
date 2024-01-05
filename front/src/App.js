@@ -101,7 +101,7 @@ function App() {
         );
         const currentVotes = response.data.votes || 0;
 
-        await axios.put(`https://service-api-mzdo.onrender.com/api/futbolistas${id}/votes`, {
+        await axios.put(`https://service-api-mzdo.onrender.com/api/futbolistas/${id}/votes`, {
           votes: currentVotes + 1,
         });
 
