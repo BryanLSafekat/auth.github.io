@@ -82,7 +82,7 @@ function App() {
     const fetchFutbolistas = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/futbolistas"
+          "https://service-api-mzdo.onrender.com/"
         );
         setFutbolistas(response.data);
       } catch (error) {
@@ -97,11 +97,11 @@ function App() {
       
       if (isLoggedIn && !votedUsers.includes(user?.id)) {
         const response = await axios.get(
-          `http://localhost:8080/api/futbolistas/${id}`
+          `https://service-api-mzdo.onrender.com/${id}`
         );
         const currentVotes = response.data.votes || 0;
 
-        await axios.put(`http://localhost:8080/api/futbolistas/${id}/votes`, {
+        await axios.put(`https://service-api-mzdo.onrender.com/${id}/votes`, {
           votes: currentVotes + 1,
         });
 

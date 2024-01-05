@@ -11,11 +11,11 @@ app.use(cors());
 
 //Las siguientes lineas son para leer la API y actulizarla
 
-app.get("/api/futbolistas", (req, res) => {
+app.get("https://service-api-mzdo.onrender.com/", (req, res) => {
   res.sendFile(path.join(__dirname, "../api.json"));
 });
 
-app.get("https://service-api-mzdo.onrender.com/api/futbolistas/:id", (req, res) => {
+app.get("https://service-api-mzdo.onrender.com/:id", (req, res) => {
   const { id } = req.params;
 
   try {
