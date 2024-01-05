@@ -15,7 +15,7 @@ app.get("/api/futbolistas", (req, res) => {
   res.sendFile(path.join(__dirname, "../api.json"));
 });
 
-app.get("/api/futbolistas/:id", (req, res) => {
+app.get("https://service-api-mzdo.onrender.com/api/futbolistas/:id", (req, res) => {
   const { id } = req.params;
 
   try {
@@ -36,7 +36,7 @@ app.get("/api/futbolistas/:id", (req, res) => {
   }
 });
 
-app.put("/api/futbolistas/:id/votes", (req, res) => {
+app.put("https://service-api-mzdo.onrender.com/:id/votes", (req, res) => {
   const { id } = req.params;
 
   fs.readFile(path.join(__dirname, "../api.json"), "utf8", (err, data) => {
