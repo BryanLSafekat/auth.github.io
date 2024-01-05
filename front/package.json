@@ -1,6 +1,6 @@
 {
   "name": "front",
-  "homepage": "https://github.com/BryanLSafekat/auth.github.io/",
+  "homepage": "https://auth.github.io/front/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
