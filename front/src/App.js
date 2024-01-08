@@ -94,16 +94,26 @@ function App() {
 
   const handleVote = async (id) => {
     try {
-      
       if (isLoggedIn && !votedUsers.includes(user?.id)) {
         const response = await axios.get(
           `https://service-api-mzdo.onrender.com/api/futbolistas/${id}`
         );
         const currentVotes = response.data.votes || 0;
 
-        await axios.put(`https://service-api-mzdo.onrender.com/api/futbolistas/${id}/votes`, {
-          votes: currentVotes + 1,
+        await axios.put(
+          `https://service-api-mzdo.onrender.com/api/futbolistas/${id}/votes`,
+          {
+            votes: currentVotes + 1,
+          }
+        );
+
+        const updateFutbolistas = futbolistas.map((f) => {
+          if (f.id === id) {
+            return { ...f, votes: f.votes + 1 };
+          }
+          return f;
         });
+        setFutbolistas(updateFutbolistas);
 
         const updatedVotedUsers = [...votedUsers, user.id];
         localStorage.setItem("votedUsers", JSON.stringify(updatedVotedUsers));
@@ -173,7 +183,7 @@ function App() {
                   className="w-100"
                   variant="outline-primary"
                   onClick={() => handleVote(futbolista.id)}
-                  disabled={!isLoggedIn || votedUsers.includes(user?.id)}
+                  disabled={!isLoggedIn || votedUsers.includes(user?.id) || futbolista.votes.includes(user?.id)}
                 >
                   Votar
                 </Button>
