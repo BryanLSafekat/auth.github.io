@@ -183,7 +183,7 @@ function App() {
                   className="w-100"
                   variant="outline-primary"
                   onClick={() => handleVote(futbolista.id)}
-                  disabled={!isLoggedIn || votedUsers.includes(user?.id) || futbolista.votes.includes(user?.id)}
+                  disabled={!isLoggedIn || votedUsers.includes(user?.id)}
                 >
                   Votar
                 </Button>
