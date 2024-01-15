@@ -74,7 +74,7 @@ function App() {
     googleLogout();
     setProfile(null);
     localStorage.removeItem("user");
-    setUser(null);
+    setUser(null );
     setIsLoggedIn(false);
   };
 
@@ -82,7 +82,7 @@ function App() {
     const fetchFutbolistas = async () => {
       try {
         const response = await axios.get(
-          "https://service-api-mzdo.onrender.com/api/futbolistas"
+          "http://localhost:8080/api/futbolistas"
         );
         setFutbolistas(response.data);
       } catch (error) {
@@ -96,12 +96,13 @@ function App() {
     try {
       if (isLoggedIn && !votedUsers.includes(user?.id)) {
         const response = await axios.get(
-          `https://service-api-mzdo.onrender.com/api/futbolistas/${id}`
+          `http://localhost:8080/api/futbolistas/${id}`
         );
+
         const currentVotes = response.data.votes || 0;
 
         await axios.put(
-          `https://service-api-mzdo.onrender.com/api/futbolistas/${id}/votes`,
+          `http://localhost:8080/api/futbolistas/${id}/votes`,
           {
             votes: currentVotes + 1,
           }
